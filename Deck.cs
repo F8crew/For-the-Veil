@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Deck : IEnumerable<Card>
@@ -22,16 +23,7 @@ public class Deck : IEnumerable<Card>
     // Default constructor
     public Deck(int[] cardIDs)
     {
-        cards = new List<Card>();
-        foreach (int id in cardIDs)
-        {
-            // Assuming you have a method to get a Card by its ID
-            Card card = CardDatabase.GetCardById(id);
-            if (card != null)
-            {
-                cards.Add(card);
-            }
-        }
+        cards = cardIDs.Select(id => CardDatabase.GetCardById(id)).Where(card => card != null).ToList();
     }
 
     // Constructor that takes a card
@@ -42,14 +34,17 @@ public class Deck : IEnumerable<Card>
 
     public void AddCard(Card card)
     {
-        cards.Add(card);
+        if (card != null)
+        {
+            cards.Add(card);
+        }
     }
 
     public List<Card> GetCards()
     {
-        return cards;
+        return cards.ToList();
     }
-    
+
     public Card DrawCard()
     {
         if (cards.Count == 0) return null;
@@ -60,6 +55,6 @@ public class Deck : IEnumerable<Card>
 
     public void Shuffle()
     {
-        // Shuffle logic (e.g., using Fisher-Yates algorithm)
+        cards = cards.OrderBy(x => Guid.NewGuid()).ToList();
     }
 }

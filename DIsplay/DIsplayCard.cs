@@ -179,6 +179,7 @@ public class DisplayCard : MonoBehaviour
                 
                 if (secondColor == "Blue")
                 {
+                    
                     cardImage.sprite = PurpleBlueChamp;
                 }
 

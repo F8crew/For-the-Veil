@@ -7,12 +7,33 @@ public class GameManager : MonoBehaviour
     public static List<Deck> deckList = new List<Deck>();
 
     public CardDatabase cardDatabase;
+    public Champ champ;
+    public Card card;
+    public Deck deck;
+    public PlayerRecources pRecources;
 
     public string modType;
     public int PlayedCardID;
 
+    public bool isDAY;
+    public bool isNIGHT;
+
+    public int spellsCast;
+    public int cardsCast;
+
+
+    public bool playerTurn;
+    public bool enemyTurn;
+    public int turn;
+    public int round;
+
     // List of card IDs to add to the deck
     private int[] cardIDsToAdd = {}; 
+
+    //players hand
+    private List<Card> playerHand = new List<Card>();
+
+    // Method to get the active enemy champion
 
     void Start()
     {
@@ -37,156 +58,121 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Card " + currentCard.id + ": " + currentCard.cardName);
         }
+
+
     }
 
-    public void PlayCard()
+    public void DiscardCard(int amount)
     {
-        switch (PlayedCardID)
+        
+    }
+
+    public void Draw(int amount)
+    {
+        if (deckList.Count < amount)
         {
-            case 0:
-                break;
-            
-            case 1:
-                break;
-            
-            case 2:
-                break;
+            amount = deckList.Count;
+        }
+        for (int i = 0; i < amount; i++)
+        {
+            Card drawnCard = deckList[0].DrawCard();
+            if (drawnCard != null)
+            {
+                playerHand.Add(drawnCard);
+            }
 
-            case 3:
-                PlayCard3();
-                break;
-            
-            case 4:
-                PlayCard4();
-                break;
-            
-            case 5:
-                PlayCard5();
-                break;
-            
-            case 6:
-                PlayCard6();
-                break;
-            
-            case 7:
-                PlayCard7();
-                break;
-            
-            case 8:
-                PlayCard8();
-                break;
-            
-            case 9:
-                PlayCard9();
-                break;
+        }
+    }   
 
-            case 10:
-                PlayCard10();
-                break;
-            
-            case 11:
-                PlayCard11();
-                break;
-            
-            case 12:
-                PlayCard12();
-                break;
-            
-            case 13:
-                PlayCard13();
-                break;
-            
-            case 14:
-                PlayCard14();
-                break;
-            
-            case 15:
-                PlayCard15();
-                break;
-            
-            case 16:
-                PlayCard16();
-                break;
-            
-            case 17:
-                PlayCard17();
-                break;
-            
+    public void Forsee(int amount)
+    {
+
+    }
+
+    public void lookAtTopCards(int amount)
+    {
+
+    }
+
+    public void RemoveCard()
+    {
+
+    }
+
+
+    void gameStart()
+    {
+        isDAY = true;
+        
+        champ.setCardData(card);
+    }
+
+    void checkDayTime()
+    {
+        int D = 0;
+        int N = 0;
+
+        if (!isDAY)
+        {
+            isNIGHT = true;
+        }
+
+        if (!isNIGHT)
+        {
+            isDAY = true;
+        }
+
+        if (round == 3 + D)
+        {
+            N += 4;
+            swapDayAndNight();
+        }
+
+        if (round == 1 + D)
+        {
+            D += 4;
+            swapDayAndNight();
         }
     }
 
-    public void PlayCard3()
+    public void swapDayAndNight()
     {
-        
+        if(isDAY)
+        {
+            isDAY = false;
+            isNIGHT = true;
+        }
+        else{
+            isDAY = true;
+            isNIGHT = false;
+        }
     }
 
-    public void PlayCard4()
+    public delegate void RoundStartEventHandler();
+    public event RoundStartEventHandler OnRoundStart;
+
+    public void roundStart()
     {
+        round += 1;
+        champ.CD -= 1; 
+        checkDayTime();
         
+        // Invoke the event if there are any subscribers
+        OnRoundStart?.Invoke();
     }
 
-    public void PlayCard5()
+    public void turnStart()
     {
+        turn += 1;
+        if(turn >= 5)
+        {
+            pRecources.energy = 5;
+        }
+        else{
+            pRecources.energy = turn;
+        }
         
+        Draw(1);
     }
 
-    public void PlayCard6()
-    {
-        
-    }
-
-    public void PlayCard7()
-    {
-        
-    }
-
-    public void PlayCard8()
-    {
-        
-    }
-
-    public void PlayCard9()
-    {
-        
-    }
-
-    public void PlayCard10()
-    {
-        
-    }
-
-    public void PlayCard11()
-    {
-        
-    }
-
-    public void PlayCard12()
-    {
-        
-    }
-
-    public void PlayCard13()
-    {
-        
-    }
-
-    public void PlayCard14()
-    {
-        
-    }
-
-    public void PlayCard15()
-    {
-        
-    }
-
-    public void PlayCard16()
-    {
-        
-    }
-
-    public void PlayCard17()
-    {
-        
-    }
 }
