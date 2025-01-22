@@ -34,20 +34,24 @@ public class Deck : IEnumerable<Card>
 
     public void AddCard(Card card)
     {
-        if (card != null)
+        if (card == null)
         {
-            cards.Add(card);
+            throw new ArgumentNullException(nameof(card), "Cannot add a null card to the deck.");
         }
+        cards.Add(card);
     }
 
-    public List<Card> GetCards()
+    public IReadOnlyList<Card> GetCards()
     {
-        return cards.ToList();
+        return cards.AsReadOnly();
     }
 
     public Card DrawCard()
     {
-        if (cards.Count == 0) return null;
+        if (cards.Count == 0)
+        {
+            throw new InvalidOperationException("Cannot draw a card from an empty deck.");
+        }
         Card drawnCard = cards[0];
         cards.RemoveAt(0);
         return drawnCard;

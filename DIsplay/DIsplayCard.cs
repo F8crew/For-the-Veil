@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class DisplayCard : MonoBehaviour
 {
-
     PlayerWeapon playerWeapon;
     GameManager GM;
 
