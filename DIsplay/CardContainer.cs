@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.Compression;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,6 +10,10 @@ public class CardContainer : MonoBehaviour
     public Vector3 inspectScale = new Vector3(1.2f, 1.2f, 1f); // Scale to apply when inspecting (z is 1 for 2D)
     public float inspectYPosition = -350f;
     public float inspectOffset = 3f;
+    public float startPosition1 = -479F;
+    public float startPosition2 = -483F;
+    public float startPosition3 = -479F;
+    private bool isInspecting = false;
 
     private void Start()
     {
@@ -19,48 +24,75 @@ public class CardContainer : MonoBehaviour
 
     void OnMouseOver()
     {
-        Inspecting();
-        Debug.Log("Mouse enter");
+        if (!isInspecting)
+        {
+            Inspecting();
+            Debug.Log("Mouse enter");
+        }
     }
 
     void OnMouseExit()
     {
-        StopInspecting();
-        Debug.Log("Mouse exit");
+        if (isInspecting)
+        {
+            StopInspecting();
+            Debug.Log("Mouse exit");
+        }
     }
 
     public void Inspecting()
     {
-        // Scale the card
-        transform.localScale = inspectScale;
-
-        // Move the card in front of others
-        Vector3 newPosition = transform.localPosition;
-        newPosition.z = inspectOffset;
-        newPosition.y = inspectYPosition;
-        transform.localPosition = newPosition;
-
-        foreach (Transform child in transform)
+        if (!isInspecting)
         {
-            Vector3 childPosition = child.localPosition;
-            childPosition.z = 3;
-            child.localPosition = childPosition;
+            isInspecting = true;
+            // Scale the card
+            transform.localScale = inspectScale;
+
+            // Move the card in front of others
+            Vector3 newPosition = transform.localPosition;
+            newPosition.z = inspectOffset;
+            newPosition.y = inspectYPosition;
+            transform.localPosition = newPosition;
+
+            foreach (Transform child in transform)
+            {
+                Vector3 childPosition = child.localPosition;
+                childPosition.z = -2;
+                child.localPosition = childPosition;
+            }
         }
     }
 
     public void StopInspecting()
     {
-        transform.localScale = originalScale;
-        Vector3 newPosition = transform.localPosition;
-        newPosition.z = 2;
-        newPosition.y = -479f;
-        transform.localPosition = newPosition;
-
-        foreach (Transform child in transform)
+        if (isInspecting)
         {
-            Vector3 childPosition = child.localPosition;
-            childPosition.z = 2;
-            child.localPosition = childPosition;
+            isInspecting = false;
+            transform.localScale = originalScale;
+            Vector3 newPosition = transform.localPosition;
+            newPosition.z = 2;
+
+            if (Mathf.Abs(transform.rotation.eulerAngles.z) < 1f)
+            {
+                newPosition.y = startPosition1;
+            }
+            else if (Mathf.Abs(transform.rotation.eulerAngles.z - 7f) < 1f)
+            {
+                newPosition.y = startPosition2;
+            }
+            else
+            {
+                newPosition.y = startPosition1;
+            }
+
+            transform.localPosition = newPosition;
+
+            foreach (Transform child in transform)
+            {
+                Vector3 childPosition = child.localPosition;
+                childPosition.z = 2;
+                child.localPosition = childPosition;
+            }
         }
     }
 }
